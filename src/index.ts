@@ -1,4 +1,3 @@
-import { log } from "console";
 import fs from "fs";
 
 const prepareLevel = (level: number) => {
@@ -173,10 +172,43 @@ const _03 = () => {
   console.log(part2Result);
 };
 
+const _04 = () => {
+  const input = prepareLevel(4);
+
+  class Range {
+    begin: number;
+    end: number;
+
+    constructor(begin: number, end: number) {
+      this.begin = begin;
+      this.end = end;
+    }
+  }
+
+  const result = input
+    .split("\n")
+    .filter((value) => value.length != 0)
+    .map((line) => line.split(","))
+    .map(([first, second]) => {
+      console.log(first);
+      console.log(second);
+      const [beginA, endA] = first.split("-");
+      const [beginB, endB] = second.split("-");
+      return [new Range(+beginA, +endA), new Range(+beginB, +endB)] as const;
+    })
+    .filter(
+      ([rangeA, rangeB]) =>
+        (rangeA.begin <= rangeB.begin && rangeA.end >= rangeB.end) ||
+        (rangeB.begin <= rangeA.begin && rangeB.end >= rangeA.end)
+    );
+  console.log(result.length);
+};
+
 const main = () => {
   _01();
   _02();
   _03();
+  _04();
 };
 
 main();
