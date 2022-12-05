@@ -1,19 +1,18 @@
+import { log } from "console";
 import fs from "fs";
-import { join } from "path";
 
-const prepareInput = (path: string) => {
-  const content = fs.readFileSync(path).toString();
-  const lines = content.split("\n");
-  return lines;
+const prepareLevel = (level: number) => {
+  const levelString = level.toString().padStart(2, "0");
+  console.log(`Day ${level}`);
+  return fs.readFileSync(`src/inputs/${levelString}.txt`).toString();
 };
 
 const _01 = () => {
-  console.log("Part 1");
-  const lines = prepareInput("src/inputs/01.txt");
+  const input = prepareLevel(1).split("\n");
 
   const groups: number[][] = [];
   let buffer: number[] = [];
-  for (const line of lines) {
+  for (const line of input) {
     if (line.length === 0) {
       groups.push(buffer);
       buffer = [];
@@ -38,9 +37,9 @@ const _01 = () => {
 };
 
 const _02 = () => {
-  console.log("Part 2");
-  let lines = prepareInput("src/inputs/02.txt");
-  lines = lines.filter((value) => value.length != 0);
+  const input = prepareLevel(2)
+    .split("\n")
+    .filter((value) => value.length != 0);
 
   const myOptions = { Rock: "X", Paper: "Y", Scissors: "Z" };
   const opponentOptions = { Rock: "A", Paper: "B", Scissors: "C" };
@@ -71,7 +70,7 @@ const _02 = () => {
 
   let totalScore = 0;
   let totalScore2 = 0;
-  for (const line of lines) {
+  for (const line of input) {
     const [opponent, me] = line.split(" ");
 
     totalScore += selectionPoints[me];
@@ -117,9 +116,67 @@ const _02 = () => {
   console.log(totalScore2);
 };
 
+const _03 = () => {
+  const input = prepareLevel(3).split("\n");
+
+  const getPriority = (itemType: string) => {
+    // Map lowercase values to 1 - 26...
+    if (itemType === itemType.toLowerCase()) {
+      // ASCII 'a' is 97.
+      return itemType.charCodeAt(0) - 96;
+    }
+    // and uppercase values to 27 - 52.
+    else {
+      // ASCII 'A' is 65.
+      return itemType.charCodeAt(0) - 65 + 27;
+    }
+  };
+
+  // Each line will always have an even number of characters.
+  const partOneResult = input
+    .map((line) => [
+      new Set([...line.slice(0, line.length / 2)]),
+      new Set([...line.slice(line.length / 2, line.length)]),
+    ])
+    .flatMap(([first, second]) =>
+      Array.from(first).filter((e) => second.has(e))
+    )
+    .map(getPriority)
+    .reduce((accumulator, current) => (accumulator += current), 0);
+
+  console.log(partOneResult);
+
+  // Part 2
+  // Group in sets of 3.
+  let groups: string[][] = [];
+  let temp: string[] = [];
+  for (const line of input) {
+    if (temp.length === 3) {
+      groups.push(temp);
+      temp = [];
+    }
+    temp.push(line);
+  }
+
+  const part2Result = groups
+    .map(([first, second, third]) => [
+      new Set([...first]),
+      new Set([...second]),
+      new Set([...third]),
+    ])
+    .flatMap(([first, second, third]) =>
+      Array.from(first).filter((e) => second.has(e) && third.has(e))
+    )
+    .map(getPriority)
+    .reduce((accumulator, current) => (accumulator += current), 0);
+
+  console.log(part2Result);
+};
+
 const main = () => {
   _01();
   _02();
+  _03();
 };
 
 main();
