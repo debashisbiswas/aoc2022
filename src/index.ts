@@ -175,33 +175,34 @@ const _03 = () => {
 const _04 = () => {
   const input = prepareLevel(4);
 
-  class Range {
-    begin: number;
-    end: number;
-
-    constructor(begin: number, end: number) {
-      this.begin = begin;
-      this.end = end;
-    }
-  }
-
-  const result = input
+  const ranges = input
     .split("\n")
     .filter((value) => value.length != 0)
     .map((line) => line.split(","))
     .map(([first, second]) => {
-      console.log(first);
-      console.log(second);
       const [beginA, endA] = first.split("-");
       const [beginB, endB] = second.split("-");
-      return [new Range(+beginA, +endA), new Range(+beginB, +endB)] as const;
-    })
-    .filter(
-      ([rangeA, rangeB]) =>
-        (rangeA.begin <= rangeB.begin && rangeA.end >= rangeB.end) ||
-        (rangeB.begin <= rangeA.begin && rangeB.end >= rangeA.end)
-    );
-  console.log(result.length);
+      return [
+        { begin: +beginA, end: +endA },
+        { begin: +beginB, end: +endB },
+      ];
+    });
+
+  const part1Result = ranges.filter(
+    ([rangeA, rangeB]) =>
+      (rangeA.begin <= rangeB.begin && rangeA.end >= rangeB.end) ||
+      (rangeB.begin <= rangeA.begin && rangeB.end >= rangeA.end)
+  );
+  console.log(part1Result.length);
+
+  const part2Result = ranges.filter(
+    ([rangeA, rangeB]) =>
+      (rangeB.begin <= rangeA.begin && rangeA.begin <= rangeB.end) ||
+      (rangeB.begin <= rangeA.end && rangeA.end <= rangeB.end) ||
+      (rangeA.begin <= rangeB.begin && rangeB.begin <= rangeA.end) ||
+      (rangeA.begin <= rangeB.end && rangeB.end <= rangeA.end)
+  );
+  console.log(part2Result.length);
 };
 
 const main = () => {
