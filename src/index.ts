@@ -283,7 +283,7 @@ const _06 = () => {
 
     for (let i = 0; i < input.length; i++) {
       ringBuffer[i % bufferSize] = input[i];
-      if (new Set([...ringBuffer]).size === bufferSize) return i + 1;
+      if (new Set(ringBuffer).size === bufferSize) return i + 1;
     }
   };
 
