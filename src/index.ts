@@ -1,13 +1,32 @@
-import { readFileSync } from "fs";
+import { existsSync, readFileSync } from "fs";
+import { EOL } from "os";
+import path from "path";
 
-const prepareLevel = (level: number) => {
+const prepareLevel = (level: number): string[] => {
   const levelString = level.toString().padStart(2, "0");
-  console.log(`Day ${levelString}`);
-  return readFileSync(`src/inputs/${levelString}.txt`).toString();
+  const filePath = path.join("src", "inputs", `${levelString}.txt`);
+
+  console.log(`Day ${levelString} (${filePath})`);
+
+  if (existsSync(filePath)) {
+    const input = readFileSync(filePath).toString().split(EOL);
+
+    // The EOL split can leave an empty line at the end of the array, which is
+    // not part of the input. Remove it.
+    if (input.at(-1)?.length === 0) {
+      input.pop();
+    }
+
+    return input;
+  } else {
+    console.log(`Could not read ${filePath}`);
+  }
+
+  return [];
 };
 
 const _01 = () => {
-  const input = prepareLevel(1).split("\n");
+  const input = prepareLevel(1);
 
   const groups: number[][] = [];
   let buffer: number[] = [];
@@ -36,9 +55,7 @@ const _01 = () => {
 };
 
 const _02 = () => {
-  const input = prepareLevel(2)
-    .split("\n")
-    .filter((value) => value.length != 0);
+  const input = prepareLevel(2);
 
   const myOptions = { Rock: "X", Paper: "Y", Scissors: "Z" };
   const opponentOptions = { Rock: "A", Paper: "B", Scissors: "C" };
@@ -116,7 +133,7 @@ const _02 = () => {
 };
 
 const _03 = () => {
-  const input = prepareLevel(3).split("\n");
+  const input = prepareLevel(3);
 
   const getPriority = (itemType: string) => {
     // Map lowercase values to 1 - 26...
@@ -176,8 +193,6 @@ const _04 = () => {
   const input = prepareLevel(4);
 
   const ranges = input
-    .split("\n")
-    .filter((value) => value.length != 0)
     .map((line) => line.split(","))
     .map(([first, second]) => {
       const [beginA, endA] = first.split("-");
@@ -235,9 +250,8 @@ const _05 = () => {
   let workingStacks = initialStacks.map((array) => array.slice());
 
   const input = prepareLevel(5);
-  const lines = input.split("\n").filter((line) => line.length != 0);
 
-  for (const line of lines) {
+  for (const line of input) {
     // format: move (count) from (src) to (dest)
 
     // Yes, the parseInt function is not passed directly to map on purpose:
@@ -257,7 +271,7 @@ const _05 = () => {
   // Part 2
   workingStacks = initialStacks.map((array) => array.slice());
 
-  for (const line of lines) {
+  for (const line of input) {
     let [count, src, dest] = line
       .match(/\d+/g)
       ?.map((s) => parseInt(s)) as number[];
@@ -271,7 +285,7 @@ const _05 = () => {
 };
 
 const _06 = () => {
-  const input = prepareLevel(6).split("\n")[0];
+  const input = prepareLevel(6)[0];
 
   const solve = (bufferSize: number) => {
     const ringBuffer = [];
