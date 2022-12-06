@@ -253,13 +253,7 @@ const _05 = () => {
 
   for (const line of input) {
     // format: move (count) from (src) to (dest)
-
-    // Yes, the parseInt function is not passed directly to map on purpose:
-    // https://stackoverflow.com/questions/262427/why-does-parseint-yield-nan-with-arraymap
-    let [count, src, dest] = line
-      .match(/\d+/g)
-      ?.map((s) => parseInt(s)) as number[];
-
+    let [count, src, dest] = line.match(/\d+/g)?.map(Number)!;
     for (let i = 0; i < count; i++) {
       workingStacks[dest - 1].push(workingStacks[src - 1].pop() || "");
     }
@@ -272,10 +266,7 @@ const _05 = () => {
   workingStacks = initialStacks.map((array) => array.slice());
 
   for (const line of input) {
-    let [count, src, dest] = line
-      .match(/\d+/g)
-      ?.map((s) => parseInt(s)) as number[];
-
+    let [count, src, dest] = line.match(/\d+/g)?.map(Number)!;
     workingStacks[dest - 1].push(
       ...workingStacks[src - 1].splice(-count, count)
     );
