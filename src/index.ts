@@ -1,9 +1,9 @@
-import fs from "fs";
+import { readFileSync } from "fs";
 
 const prepareLevel = (level: number) => {
   const levelString = level.toString().padStart(2, "0");
   console.log(`Day ${level}`);
-  return fs.readFileSync(`src/inputs/${levelString}.txt`).toString();
+  return readFileSync(`src/inputs/${levelString}.txt`).toString();
 };
 
 const _01 = () => {
@@ -220,7 +220,7 @@ const _05 = () => {
  */
 
   // Thanks, vim!
-  const stacks = [
+  const initialStacks = [
     ["R", "N", "F", "V", "L", "J", "S", "M"],
     ["P", "N", "D", "Z", "F", "J", "W", "H"],
     ["W", "R", "C", "D", "G"],
@@ -231,6 +231,9 @@ const _05 = () => {
     ["Q", "T", "H", "F", "N", "B", "V"],
     ["L", "M", "H", "Z", "N", "F"],
   ];
+
+  // deep copy
+  let workingStacks = initialStacks.map((array) => array.slice());
 
   const input = prepareLevel(5);
   const lines = input.split("\n").filter((line) => line.length != 0);
@@ -245,12 +248,27 @@ const _05 = () => {
       ?.map((s) => parseInt(s)) as number[];
 
     for (let i = 0; i < count; i++) {
-      stacks[dest - 1].push(stacks[src - 1].pop() || "");
+      workingStacks[dest - 1].push(workingStacks[src - 1].pop() || "");
     }
   }
 
-  const result = stacks.flatMap((stack) => stack.at(-1));
-  console.log(result.join(""));
+  const part1Result = workingStacks.flatMap((stack) => stack.at(-1));
+  console.log(part1Result.join(""));
+
+  // Part 2
+  workingStacks = initialStacks.map((array) => array.slice());
+
+  for (const line of lines) {
+    let [count, src, dest] = line
+      .match(/\d+/g)
+      ?.map((s) => parseInt(s)) as number[];
+
+    workingStacks[dest - 1].push(
+      ...workingStacks[src - 1].splice(-count, count)
+    );
+  }
+  const part2Result = workingStacks.flatMap((stack) => stack.at(-1));
+  console.log(part2Result.join(""));
 };
 
 const main = () => {
