@@ -2,7 +2,7 @@ import { readFileSync } from "fs";
 
 const prepareLevel = (level: number) => {
   const levelString = level.toString().padStart(2, "0");
-  console.log(`Day ${level}`);
+  console.log(`Day ${levelString}`);
   return readFileSync(`src/inputs/${levelString}.txt`).toString();
 };
 
@@ -219,7 +219,6 @@ const _05 = () => {
       1   2   3   4   5   6   7   8   9
  */
 
-  // Thanks, vim!
   const initialStacks = [
     ["R", "N", "F", "V", "L", "J", "S", "M"],
     ["P", "N", "D", "Z", "F", "J", "W", "H"],
@@ -271,12 +270,29 @@ const _05 = () => {
   console.log(part2Result.join(""));
 };
 
+const _06 = () => {
+  const input = prepareLevel(6).split("\n")[0];
+
+  const solve = (bufferSize: number) => {
+    const ringBuffer = [];
+
+    for (let i = 0; i < input.length; i++) {
+      ringBuffer[i % bufferSize] = input[i];
+      if (new Set([...ringBuffer]).size === bufferSize) return i + 1;
+    }
+  };
+
+  console.log(solve(4));
+  console.log(solve(14));
+};
+
 const main = () => {
   _01();
   _02();
   _03();
   _04();
   _05();
+  _06();
 };
 
 main();
