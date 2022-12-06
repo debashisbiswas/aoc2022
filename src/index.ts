@@ -205,11 +205,60 @@ const _04 = () => {
   console.log(part2Result.length);
 };
 
+const _05 = () => {
+  /* Given starting position:
+
+     [M] [H]         [N]
+     [S] [W]         [F]     [W] [V]
+     [J] [J]         [B]     [S] [B] [F]
+     [L] [F] [G]     [C]     [L] [N] [N]
+     [V] [Z] [D]     [P] [W] [G] [F] [Z]
+     [F] [D] [C] [S] [W] [M] [N] [H] [H]
+     [N] [N] [R] [B] [Z] [R] [T] [T] [M]
+     [R] [P] [W] [N] [M] [P] [R] [Q] [L]
+      1   2   3   4   5   6   7   8   9
+ */
+
+  // Thanks, vim!
+  const stacks = [
+    ["R", "N", "F", "V", "L", "J", "S", "M"],
+    ["P", "N", "D", "Z", "F", "J", "W", "H"],
+    ["W", "R", "C", "D", "G"],
+    ["N", "B", "S"],
+    ["M", "Z", "W", "P", "C", "B", "F", "N"],
+    ["P", "R", "M", "W"],
+    ["R", "T", "N", "G", "L", "S", "W"],
+    ["Q", "T", "H", "F", "N", "B", "V"],
+    ["L", "M", "H", "Z", "N", "F"],
+  ];
+
+  const input = prepareLevel(5);
+  const lines = input.split("\n").filter((line) => line.length != 0);
+
+  for (const line of lines) {
+    // format: move (count) from (src) to (dest)
+
+    // Yes, the parseInt function is not passed directly to map on purpose:
+    // https://stackoverflow.com/questions/262427/why-does-parseint-yield-nan-with-arraymap
+    let [count, src, dest] = line
+      .match(/\d+/g)
+      ?.map((s) => parseInt(s)) as number[];
+
+    for (let i = 0; i < count; i++) {
+      stacks[dest - 1].push(stacks[src - 1].pop() || "");
+    }
+  }
+
+  const result = stacks.flatMap((stack) => stack.at(-1));
+  console.log(result.join(""));
+};
+
 const main = () => {
   _01();
   _02();
   _03();
   _04();
+  _05();
 };
 
 main();
